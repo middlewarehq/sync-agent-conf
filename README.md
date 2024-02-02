@@ -8,7 +8,7 @@ Before proceeding, ensure you have the following:
 
 - Docker installed on your system.
 - Middleware Credentials: Contact your Middleware Systems administrator to obtain the `MHQ_CLIENT_ID` and `MHQ_CLIENT_SECRET` credentials required for authentication. Instructions for how to use them are below.
-- Personal Access Token (PAT): Generate a PAT with the `read-api` and `read-user` scopes to authenticate with the GitLab API.
+- Personal Access Token (PAT): Generate a PAT with the `read_api` and `read_user` scopes to authenticate with the GitLab API.
 
 ## Setup Instructions
 
