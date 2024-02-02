@@ -1,0 +1,10 @@
+{
+  "integrations": {
+    "gitlab": {
+      "repositories": [
+        "https://gitlab.example.com/example/example",
+        "https://gitlab.example.com/example/example2"
+      ]
+    }
+  }
+}
