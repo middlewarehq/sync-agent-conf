@@ -18,11 +18,9 @@ services:
     image: public.ecr.aws/y4x5l0o7/dbmate-docker:latest
     depends_on:
       - db
-    volumes:
-      - ./:/db/
     environment:
       - DATABASE_URL=postgres://postgres:postgres@db:5432/mhqagent?sslmode=disable
-    working_dir: /db/
+    working_dir: /
     command: bash -c  "dbwait.sh && dbmate up && dbmate dump"
 
   scripts:
