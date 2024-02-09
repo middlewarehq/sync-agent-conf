@@ -67,7 +67,7 @@ Before proceeding, ensure you have the following:
       <img width="746" alt="image" src="https://github.com/middlewarehq/sync-agent-conf/assets/34140672/28cbee28-1353-46d1-a1dc-39e992320c6a">
 
     - Your repos will show up under “Repos linked to your org”.
-    - Click on the << icon on each repo you want to add to the team.
+    - Click on the << icon on each repo you want to add to the team.               
       <img width="126" alt="image" src="https://github.com/middlewarehq/sync-agent-conf/assets/34140672/2f7101d5-9a0f-4a2b-9d16-91eca763386a">
 
     - A “notification” will indicate that your settings have been saved.
