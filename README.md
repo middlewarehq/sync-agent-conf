@@ -6,7 +6,7 @@ This guide will help you set up a GitLab self-hosted agent for MiddlewareHQ.
 
 Before proceeding, ensure you have the following:
 
-- Docker installed on your system.
+- Docker installed on your system and docker daemon is running.
 - Middleware Credentials: Contact your Middleware Systems administrator to obtain the `MHQ_CLIENT_ID` and `MHQ_CLIENT_SECRET` credentials required for authentication. Instructions for how to use them are below.
 - Personal Access Token (PAT): Generate a PAT with the `read_api` and `read_user` scopes to authenticate with the GitLab API.
 
@@ -17,36 +17,66 @@ Before proceeding, ensure you have the following:
 
 2. **Middleware Credentials**:
    - Obtain the Middleware Credentials (`MHQ_CLIENT_ID` and `MHQ_CLIENT_SECRET`) from your Middleware Systems administrator.
+   - Add these to `client.txt`.
 
 3. **Generate Personal Access Token (PAT)**:
-   - Obtain the domain URL of your self-hosted GitLab instance in the format `https://gitlab.example.com` (`GITLAB_DOMAIN_URL`).
-   - Generate a PAT with the `read-api` and `read-user` scopes to authenticate with the GitLab API.
+   - Obtain the domain URL (`GITLAB_DOMAIN_URL`) of your self-hosted GitLab instance in the format:
+     - `https://gitlab.com/-/user_settings/personal_access_tokens` OR
+     - `https://yourgitlabinstance.com/-/user_settings/personal_access_tokens`.
+   - Generate a PAT with the `read_api` and `read_user` scopes to authenticate with the GitLab API. 
    - Use this token (`GITLAB_ACCESS_TOKEN`) for authentication and update it when necessary for security reasons.
+   - Add both to `client.txt`.
+
 
 4. **Define Repository URLs**:
-   - Create a `config.json` file in the same directory as the `docker-compose.yml` file to store repository URLs for synchronization with Middleware Systems.
-   - Save the repository URLs in `config.json` for reference during synchronization.
+   - Save the repository URLs in `config.json` for reference during synchronization in `integrations->gitlab->repositories`.
 
 5. **Deploy the Agent**:
-   - Run the following command to create and run the Docker container for the MHQ GitLab Agent:
-     ```
-     docker-compose up -d
-     ```
-     This command deploys the agent in detached mode, allowing it to run independently in the background.
+   - Run the following command to create and run the Docker container for the MHQ GitLab Agent in the project root:
+    ```
+    docker compose up -d
+    ```
+    This command deploys the agent in detached mode, allowing it to run independently in the background.
+    (If you’re running this later, run `docker compose pull`)
 
 ## Additional Checks
 
+- **Check Docker Logs**:
+  - Check if the docker container is running properly:
+    - Use the below command to get the list of all the docker containers. Copy the id of the docker-container with the name `mhq-sync-agent-scripts`.
+       ```
+       docker ps -a   
+       ```
+    - Use the below command with the id of the container you copied from the previous step. This command will give the logs of the container.
+       ```
+       docker logs [id_of_container]
+       ```
+    - Check the logs to match the following. The order of the logs may differ. Finally, The exit status of data-extraction-and-transfer shall be 0. It may take some time to get this last log as it depends on the amount of data it is trying to sync.
+
 - **Check Middleware App Integration**:
-  - Visit your Middleware App to check if your app has integrated with the GitLab self-hosted agent successfully.
+  - Visit your Middleware App ([app.middlewarehq.com](https://app.middlewarehq.com)) to check if your app has integrated with the GitLab self-hosted agent successfully.
+    - Go to [Integrations](https://app.middlewarehq.com/integrations).
+    - Gitlab’s integration should appear linked. The “Link” button as shown below would turn into “Unlink”.
+    - Visit [Teams](https://app.middlewarehq.com/teams).
+    - Select a team of your choice from the list.
+    - Click on the “Repos” tab right under the page header.
+    - Your repos will show up under “Repos linked to your org”.
+    - Click on the << icon on each repo you want to add to the team.
+    - A “notification” will indicate that your settings have been saved.
     
 
 - **Database Management**:
   - Use a database management tool like TablePlus to connect to the Docker PostgreSQL database and inspect logs for further analysis.
-  - Use the following credentials to connect to the database:
-    - Host: `localhost or server IP address`
-    - Port: `5435`
-    - User: `postgres`
-    - Password: `postgres`
-    - Database: `mhqagent`
+    - Ensure to configure with the following parameters:
+        - Host: localhost or server IP address
+        - Port: 5435
+        - User: postgres
+        - Password: postgres
+        - Database: mhqagent
+
+    **NOTES:**
+    - Password change instructions coming soon.
+    - We recommend not exposing port 5435 on the machine that this is running on to any external network.
+
 
 Follow above steps to successfully set up and configure the GitLab self-hosted agent for MiddlewareHQ synchronization.
