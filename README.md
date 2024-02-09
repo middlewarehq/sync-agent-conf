@@ -52,17 +52,28 @@ Before proceeding, ensure you have the following:
        docker logs [id_of_container]
        ```
     - Check the logs to match the following. The order of the logs may differ. Finally, The exit status of data-extraction-and-transfer shall be 0. It may take some time to get this last log as it depends on the amount of data it is trying to sync.
+      <img width="749" alt="image" src="https://github.com/middlewarehq/sync-agent-conf/assets/34140672/e68dcad6-e46a-4e16-a681-b3d8832b71f7">
+
 
 - **Check Middleware App Integration**:
   - Visit your Middleware App ([app.middlewarehq.com](https://app.middlewarehq.com)) to check if your app has integrated with the GitLab self-hosted agent successfully.
     - Go to [Integrations](https://app.middlewarehq.com/integrations).
-    - Gitlab’s integration should appear linked. The “Link” button as shown below would turn into “Unlink”.
+    - Gitlab’s integration should appear linked. The “Link” button as shown below would turn into *“Unlink”*.
+      <img width="267" alt="image" src="https://github.com/middlewarehq/sync-agent-conf/assets/34140672/273a5d9d-2eeb-4935-aa6a-af0e23ba5704">
+
     - Visit [Teams](https://app.middlewarehq.com/teams).
     - Select a team of your choice from the list.
     - Click on the “Repos” tab right under the page header.
+      <img width="746" alt="image" src="https://github.com/middlewarehq/sync-agent-conf/assets/34140672/28cbee28-1353-46d1-a1dc-39e992320c6a">
+
     - Your repos will show up under “Repos linked to your org”.
     - Click on the << icon on each repo you want to add to the team.
+      <img width="126" alt="image" src="https://github.com/middlewarehq/sync-agent-conf/assets/34140672/2f7101d5-9a0f-4a2b-9d16-91eca763386a">
+
     - A “notification” will indicate that your settings have been saved.
+    - Voila! You are good to start using middleware app.
+      * Process Overview (https://app.middlewarehq.com/collaborate/process) is a great place to start viewing your first insights.
+      * If you don’t see anything even after 5 minutes or so, let us know on jayant@middlewarehq.com or dhruv@middlewarehq.com.
     
 
 - **Database Management**:
