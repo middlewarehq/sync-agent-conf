@@ -3,3 +3,6 @@ MHQ_CLIENT_SECRET=[Middleware CLIENT_SECRET in single quotes. Ex: '--key---' ]
 
 GITLAB_DOMAIN_URL=[Your domain URL of type: https://gitlab.example.com]
 GITLAB_ACCESS_TOKEN=[Your Gitlab PAT]
+
+BITBUCKET_ACCESS_TOKEN=[Your BitBucket Workspace Access Token]
+BITBUCKET_WORKSPACE_NAME=[Your BitBucket Workspace name/slug]
