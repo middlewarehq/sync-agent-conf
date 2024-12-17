@@ -5,6 +5,12 @@
         "https://gitlab.example.com/example/example",
         "https://gitlab.example.com/example/example2"
       ]
+    },
+    "bitbucket": {
+      "repositories": [
+        "https://bitbucket.org/example_ws_1/example_repo_1",
+        "https://bitbucket.org/example_ws_2/example_repo_2"
+      ]
     }
   }
 }
