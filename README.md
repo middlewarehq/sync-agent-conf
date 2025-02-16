@@ -24,7 +24,7 @@ Before proceeding, ensure you have the following:
 2. **Middleware Credentials**:
 
    - Obtain the Middleware Credentials (`MHQ_CLIENT_ID` and `MHQ_CLIENT_SECRET`) from your Middleware Systems administrator.
-   - Add these to `client.txt`.
+   - Add these to `.env`.
 
 3. **Generate Personal Access Token (PAT)**:
 
@@ -33,7 +33,7 @@ Before proceeding, ensure you have the following:
      - `https://yourgitlabinstance.com/-/user_settings/personal_access_tokens`.
    - Generate a PAT with the `read_api` and `read_user` scopes to authenticate with the GitLab API.
    - Use this token (`GITLAB_ACCESS_TOKEN`) for authentication and update it when necessary for security reasons.
-   - Add both `GITLAB_DOMAIN_URL` and `GITLAB_ACCESS_TOKEN` to `client.txt`.
+   - Add both `GITLAB_DOMAIN_URL` and `GITLAB_ACCESS_TOKEN` to `.env`.
 
 4. **Define Repository URLs**:
 
@@ -68,11 +68,11 @@ Before proceeding, ensure you have the following:
 2. **Middleware Credentials**:
 
    - Obtain the Middleware Credentials (`MHQ_CLIENT_ID` and `MHQ_CLIENT_SECRET`) from your Middleware Systems administrator.
-   - Add these to `client.txt`.
+   - Add these to `.env`.
 
 3. **Add Bitbucket Workspace Details**:
 
-   - Add the following to `client.txt`:
+   - Add the following to `.env`:
      - `BITBUCKET_ACCESS_TOKEN`: The access token for your Bitbucket workspace.
      - `BITBUCKET_WORKSPACE_NAME`: The name or slug of your Bitbucket workspace.
 
