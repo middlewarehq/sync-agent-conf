@@ -85,7 +85,7 @@ services:
               }
             }
           ]
-        }" "$SLACK_NOTIFICATION_HOOK" && \
+        }" "$SLACK_NOTIFICATION_HOOK"; \
         attempts=0; \
         while [ $$attempts -lt 3 ]; do \
           echo "Fetching system status..." && \
@@ -112,7 +112,7 @@ services:
                     }
                   }
                 ]
-              }" "$SLACK_NOTIFICATION_HOOK" && \
+              }" "$SLACK_NOTIFICATION_HOOK"; \
               break; \
             fi; \
             sleep 5; \
@@ -139,7 +139,7 @@ services:
                   }
                 }
               ]
-            }" "$SLACK_NOTIFICATION_HOOK" && \
+            }" "$SLACK_NOTIFICATION_HOOK"; \
             echo "Container restart triggered" && \
             break; \
           else \
