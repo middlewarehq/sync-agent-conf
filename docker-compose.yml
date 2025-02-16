@@ -1,8 +1,7 @@
-version: '1'
-
 services:
   db:
     image: postgres:14.3-alpine
+    container_name: middleware-db
     restart: always
     environment:
       POSTGRES_USER: postgres
@@ -16,6 +15,7 @@ services:
 
   dbmate:
     image: public.ecr.aws/y4x5l0o7/dbmate-docker:latest
+    container_name: middleware-dbmate
     depends_on:
       - db
     environment:
@@ -25,14 +25,134 @@ services:
 
   scripts:
     image: public.ecr.aws/y4x5l0o7/mhq-sync-scripts:latest
+    container_name: middleware-sync-agent
     depends_on:
       - db
       - dbmate
     links:
       - db
     volumes:
-      - ./client.txt:/root/client.txt
       - ./config.json:/root/config.json
+      - tmp_status:/tmp/mhq-status
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    env_file:
+      - .env
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: middleware-watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 30 --cleanup --label-enable --include-restarting --include-stopped
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_LABEL_ENABLE=true
+      - WATCHTOWER_NOTIFICATIONS_LEVEL=debug
+      - WATCHTOWER_NOTIFICATIONS=slack
+      - WATCHTOWER_NOTIFICATION_SLACK_IDENTIFIER=Watchtower
+      - WATCHTOWER_NOTIFICATION_SLACK_CHANNEL=#sync-agent-watchtower
+      - WATCHTOWER_NOTIFICATION_SLACK_HOOK_URL=${SLACK_NOTIFICATION_HOOK}
+      - WATCHTOWER_NOTIFICATION_TITLE_TAG=${ORG_NAME}
+    env_file:
+      - .env
+
+  config-watcher:
+    image: docker.io/alpine:latest
+    container_name: middleware-config-watcher
+    restart: unless-stopped
+    depends_on:
+      - scripts
+    volumes:
+      - ./:/watch
+      - /var/run/docker.sock:/var/run/docker.sock
+      - tmp_status:/tmp/mhq-status
+    command: |
+      sh -c '
+      apk add --no-cache inotify-tools curl && \
+      echo "Starting config watcher..." && \
+      while true; do \
+        echo "Waiting for file changes..." && \
+        inotifywait -q -e modify /watch/.env /watch/config.json; \
+        echo "File change detected, checking for system status..." && \
+        curl -s -X POST -H "Content-type: application/json" --data "{
+          \"blocks\": [
+            {
+              \"type\": \"section\",
+              \"text\": {
+                \"type\": \"mrkdwn\",
+                \"text\": \"🔔 *Configuration Change Detected*\n• Organization: *$ORG_NAME*\n• Time: $(date -u +"%Y-%m-%d %H:%M:%S") UTC\n⚡ _Waiting for pending processes to complete before restarting..._\"
+              }
+            }
+          ]
+        }" "$SLACK_NOTIFICATION_HOOK"; \
+        attempts=0; \
+        while [ $$attempts -lt 3 ]; do \
+          echo "Fetching system status..." && \
+          all_files_exist=true; \
+          for file in /tmp/mhq-status/heartbeat /tmp/mhq-status/execute_command /tmp/mhq-status/data_extraction /tmp/mhq-status/data_transfer; do \
+            if [ ! -f $$file ]; then \
+              echo "File $$file does not exist. Waiting 5 seconds..." && \
+              all_files_exist=false; \
+              break; \
+            fi; \
+          done; \
+          if ! $$all_files_exist; then \
+            attempts=$$((attempts + 1)); \
+            if [ $$attempts -eq 3 ]; then \
+              echo "Files not found after 3 attempts. Forcing container restart..." && \
+              curl -s -X POST --unix-socket /var/run/docker.sock -H "Content-Type: application/json" http://localhost/v1.43/containers/middleware-sync-agent/restart && \
+              curl -s -X POST -H "Content-type: application/json" --data "{
+                \"blocks\": [
+                  {
+                    \"type\": \"section\",
+                    \"text\": {
+                      \"type\": \"mrkdwn\",
+                      \"text\": \"⚠️ *Force Restarting Container*\n• Organization: *$ORG_NAME*\n• Time: $(date -u +"%Y-%m-%d %H:%M:%S") UTC\n• Reason: Status files not found after 3 attempts. config file might be corrupted.\"
+                    }
+                  }
+                ]
+              }" "$SLACK_NOTIFICATION_HOOK"; \
+              break; \
+            fi; \
+            sleep 5; \
+            continue; \
+          fi; \
+          all_not_running=true; \
+          for file in /tmp/mhq-status/heartbeat /tmp/mhq-status/execute_command /tmp/mhq-status/data_extraction /tmp/mhq-status/data_transfer; do \
+            status=$$(cat $$file); \
+            if [ "$$status" = "running" ]; then \
+              all_not_running=false; \
+              break; \
+            fi; \
+          done; \
+          if $$all_not_running; then \
+            echo "No pending tasks, restarting container..." && \
+            curl -s -X POST --unix-socket /var/run/docker.sock -H "Content-Type: application/json" http://localhost/v1.43/containers/middleware-sync-agent/restart; \
+            curl -s -X POST -H "Content-type: application/json" --data "{
+              \"blocks\": [
+                {
+                  \"type\": \"section\",
+                  \"text\": {
+                    \"type\": \"mrkdwn\",
+                    \"text\": \"🔄 *Restarting Container*\n• Organization: *$ORG_NAME*\n• Time: $(date -u +"%Y-%m-%d %H:%M:%S") UTC\"
+                  }
+                }
+              ]
+            }" "$SLACK_NOTIFICATION_HOOK"; \
+            echo "Container restart triggered" && \
+            break; \
+          else \
+            echo "Container busy extracting and transferring, waiting 2 seconds..." && \
+            sleep 2; \
+          fi; \
+        done; \
+        sleep 1; \
+      done'
+
+    env_file:
+      - ./.env
 
 volumes:
   pgdata: {}
+  tmp_status:
