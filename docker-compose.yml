@@ -1,4 +1,4 @@
-version: '1'
+version: "1"
 
 services:
   db:
@@ -25,6 +25,7 @@ services:
 
   scripts:
     image: public.ecr.aws/y4x5l0o7/mhq-sync-scripts:latest
+    restart: always
     depends_on:
       - db
       - dbmate
