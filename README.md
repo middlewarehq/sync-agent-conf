@@ -24,7 +24,7 @@ Before proceeding, ensure you have the following:
 2. **Middleware Credentials**:
 
    - Obtain the Middleware Credentials (`MHQ_CLIENT_ID` and `MHQ_CLIENT_SECRET`) from your Middleware Systems administrator.
-   - Add these to `client.txt`.
+   - Add these to `.env`.
 
 3. **Generate Personal Access Token (PAT)**:
 
@@ -33,7 +33,7 @@ Before proceeding, ensure you have the following:
      - `https://yourgitlabinstance.com/-/user_settings/personal_access_tokens`.
    - Generate a PAT with the `read_api` and `read_user` scopes to authenticate with the GitLab API.
    - Use this token (`GITLAB_ACCESS_TOKEN`) for authentication and update it when necessary for security reasons.
-   - Add both `GITLAB_DOMAIN_URL` and `GITLAB_ACCESS_TOKEN` to `client.txt`.
+   - Add both `GITLAB_DOMAIN_URL` and `GITLAB_ACCESS_TOKEN` to `.env`.
 
 4. **Define Repository URLs**:
 
@@ -68,11 +68,11 @@ Before proceeding, ensure you have the following:
 2. **Middleware Credentials**:
 
    - Obtain the Middleware Credentials (`MHQ_CLIENT_ID` and `MHQ_CLIENT_SECRET`) from your Middleware Systems administrator.
-   - Add these to `client.txt`.
+   - Add these to `.env`.
 
 3. **Add Bitbucket Workspace Details**:
 
-   - Add the following to `client.txt`:
+   - Add the following to `.env`:
      - `BITBUCKET_ACCESS_TOKEN`: The access token for your Bitbucket workspace.
      - `BITBUCKET_WORKSPACE_NAME`: The name or slug of your Bitbucket workspace.
 
@@ -105,7 +105,7 @@ Before proceeding, ensure you have the following:
   - Check if the docker container is running properly:
     - Use the below command to get the list of all the Docker containers. Copy the ID of the Docker container with the name `mhq-sync-agent-scripts`.
       ```
-      docker ps -a   
+      docker ps -a
       ```
     - Use the below command with the ID of the container you copied from the previous step. This command will give the logs of the container.
       ```
@@ -118,7 +118,7 @@ Before proceeding, ensure you have the following:
 - **Verify Integration**:
   - Visit your Middleware App ([app.middlewarehq.com](https://app.middlewarehq.com)) to check if your app has integrated with the agent successfully.
     - Go to [Integrations](https://app.middlewarehq.com/integrations).
-    - The integration should appear linked. The “Link” button as shown below would turn into *“Unlink”*.
+    - The integration should appear linked. The “Link” button as shown below would turn into _“Unlink”_.
 
 ### Database Management
 
@@ -139,7 +139,5 @@ Before proceeding, ensure you have the following:
 Follow the above steps to successfully set up and configure the self-hosted agent for MiddlewareHQ synchronization with GitLab or Bitbucket.
 
 e
-
-
 
 Follow above steps to successfully set up and configure the GitLab self-hosted agent for MiddlewareHQ synchronization.

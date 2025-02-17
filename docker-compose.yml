@@ -1,9 +1,8 @@
-version: '1'
-
 services:
   db:
     image: postgres:14.3-alpine
     restart: always
+    container_name: middleware-db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -16,6 +15,7 @@ services:
 
   dbmate:
     image: public.ecr.aws/y4x5l0o7/dbmate-docker:latest
+    container_name: middleware-dbmate
     depends_on:
       - db
     environment:
@@ -25,14 +25,16 @@ services:
 
   scripts:
     image: public.ecr.aws/y4x5l0o7/mhq-sync-scripts:latest
+    container_name: middleware-sync-agent
+    restart: always
     depends_on:
       - db
       - dbmate
     links:
       - db
     volumes:
-      - ./client.txt:/root/client.txt
       - ./config.json:/root/config.json
-
+    env_file:
+      - .env
 volumes:
   pgdata: {}
